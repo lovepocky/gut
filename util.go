@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/tillberg/ansi-log"
-	"github.com/tillberg/bismuth"
+	"github.com/lovepocky/bismuth"
 	"github.com/tillberg/stringset"
 	"github.com/tillberg/watcher"
 )

@@ -29,10 +29,32 @@ func NewSyncContext() *SyncContext {
 	return ctx
 }
 
-var remotePathRegexp = regexp.MustCompile("^((([^@]+)@)?([^:]+):)?(.+)$")
+/*
+Match 1
+Full match	0-29	`root@192.168.1.1:22:~/dir`
+Group 1.	0-20	`root@192.168.1.1:22:`
+Group 2.	0-5	`root@`
+Group 3.	0-4	`root`
+Group 4.	5-16	`192.168.1.1`
+Group 5.	16-19	`:22`
+Group 6.	20-29	`~/dir`
+
+Match 2
+Full match	0-9	`~/dir`
+Group 1.	9-9	``
+Group 2.	9-9	``
+Group 3.	9-9	``
+Group 4.	9-9	``
+Group 5.	9-9	``
+Group 6.	0-9	`~/dir`
+ */
+//var remotePathRegexp = regexp.MustCompile("^((([^@]+)@)?([^:]+):)?(.+)$")
+var remotePathRegexp = regexp.MustCompile(`^((([^@]+)@)?([^:]+)(:\d+)?:)?(.+)$`)
 
 func (ctx *SyncContext) ParseSyncPath(path string) error {
 	parts := remotePathRegexp.FindStringSubmatch(path)
+	var logger = ctx.NewLogger("ParseSyncPath")
+	logger.Printf("parsed parts is: %v\n", parts)
 	if len(parts) == 0 {
 		return errors.New(fmt.Sprintf("Could not parse remote path: [%s]\n", path))
 	}
@@ -47,8 +69,14 @@ func (ctx *SyncContext) ParseSyncPath(path string) error {
 			}
 		}
 		ctx.SetHostname(parts[4])
+		//set port
+		if len(parts[5]) > 0 {
+			var port = parts[5][1:]
+			i, _ := strconv.Atoi(port)
+			ctx.SetPort(i)
+		}
 	}
-	ctx.syncPath = parts[5]
+	ctx.syncPath = parts[6]
 	return nil
 }
 
@@ -58,7 +86,7 @@ func (ctx *SyncContext) AbsSyncPath() string {
 
 func (ctx *SyncContext) String() string {
 	if ctx.Hostname() != "" {
-		return fmt.Sprintf("{SyncContext %s@%s:%s}", ctx.Username(), ctx.Hostname(), ctx.syncPath)
+		return fmt.Sprintf("{SyncContext %s@%s:%d:%s}", ctx.Username(), ctx.Hostname(), ctx.Port(), ctx.syncPath)
 	}
 	return fmt.Sprintf("{SyncContext local %s}", ctx.syncPath)
 }
@@ -73,7 +101,7 @@ func (ctx *SyncContext) BranchName() string {
 
 func (ctx *SyncContext) PathAnsi(p string) string {
 	if !ctx.IsLocal() {
-		return fmt.Sprintf(ctx.Logger().Colorify("@(host:%s)@(dim:@)%s@(dim::)@(path:%s)"), ctx.Username(), ctx.NameAnsi(), p)
+		return fmt.Sprintf(ctx.Logger().Colorify("@(host:%s)@(dim:@)%s@(dim::)%d@(dim::)@(path:%s)"), ctx.Username(), ctx.NameAnsi(), ctx.Port(), p)
 	}
 	return fmt.Sprintf(ctx.Logger().Colorify("@(path:%s)"), p)
 }
