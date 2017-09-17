@@ -26,14 +26,14 @@ RUN apt install -y openssh-server && systemctl enable ssh
 
 ##################################################
 # install gut dependencies
-RUN apt install -y inotify-tools autoconf build-essential zlib1g-dev gettext &&
-    apt install -y libssl-dev &&
+RUN apt install -y inotify-tools autoconf build-essential zlib1g-dev gettext &&\
+    apt install -y libssl-dev &&\
     apt install -y net-tools
 
 ##################################################
 # install golang
-RUN wget https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz &&
-        tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz &&
+RUN wget https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz &&\
+        tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz &&\
         rm ~/go1.9.linux-amd64.tar.gz
 RUN echo 'export PATH=/usr/local/go/bin:$PATH' >> ~/.profile
 ENV PATH=$PATH:/usr/local/go/bin
