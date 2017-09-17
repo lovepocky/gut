@@ -103,6 +103,7 @@ var NeedsCommitError = errors.New("Needs commit before pull.")
 func (ctx *SyncContext) GutMerge(branch string) (err error) {
 	status := ctx.NewLogger("merge")
 	status.Printf("@(dim:Merging changes to) %s@(dim:...)\n", ctx.NameAnsi())
+	status.Printf("start of GutMerge")
 	mergeArgs := []string{
 		"merge",
 		branch,
@@ -111,10 +112,12 @@ func (ctx *SyncContext) GutMerge(branch string) (err error) {
 		"--no-edit",
 	}
 	_, stderr, retCode, err := ctx.GutQuoteBuf("merge", mergeArgs...)
+	status.Printf("end of <ctx.GutQuoteBuf>")
 	if err != nil {
 		return err
 	}
 	needCommit := retCode != 0 && strings.Contains(string(stderr), needsCommitStr)
+	status.Printf("end of <needCommit := >")
 	if needCommit {
 		// status.Printf("@(error:Failed to merge due to uncommitted changes.)\n")
 		return NeedsCommitError

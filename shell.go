@@ -418,9 +418,9 @@ func Sync(local *SyncContext, remotes []*SyncContext) (err error) {
 					status.Printf("@(error:Failed to push changes from) %s @(error:to local: %v)\n", ctx.NameAnsi(), err)
 					continue
 				}
-				// log.Printf("Starting GutMerge on %s\n", ctx.NameAnsi())
+				log.Printf("Starting GutMerge on %s\n", ctx.NameAnsi())
 				err = local.GutMerge(ctx.BranchName())
-				// log.Printf("Finished GutMerge on %s\n", ctx.NameAnsi())
+				log.Printf("Finished GutMerge on %s\n", ctx.NameAnsi())
 				if err != nil {
 					status.Printf("@(error:Failed to merge) %s @(error:into) master@(error:: %v)\n", ctx.BranchName(), err)
 				}
