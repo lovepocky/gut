@@ -18,23 +18,23 @@ ENV LC_ALL=zh_CN.UTF-8
 
 ##################################################
 # install basic tools
-RUN apt install -y curl wget
-RUN apt install -y git
+RUN apt install -y curl wget && apt install -y git
 
 ##################################################
 # install sshd
-RUN apt install -y openssh-server
-RUN systemctl enable ssh
+RUN apt install -y openssh-server && systemctl enable ssh
 
 ##################################################
 # install gut dependencies
-RUN apt install -y inotify-tools autoconf build-essential zlib1g-dev gettext
-RUN apt install -y libssl-dev
+RUN apt install -y inotify-tools autoconf build-essential zlib1g-dev gettext &&
+    apt install -y libssl-dev &&
+    apt install -y net-tools
 
 ##################################################
 # install golang
-RUN wget https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
-RUN tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz
+RUN wget https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz &&
+        tar -C /usr/local -xzf go1.9.linux-amd64.tar.gz &&
+        rm ~/go1.9.linux-amd64.tar.gz
 RUN echo 'export PATH=/usr/local/go/bin:$PATH' >> ~/.profile
 ENV PATH=$PATH:/usr/local/go/bin
 
@@ -54,12 +54,6 @@ RUN echo "root:root" | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 ##################################################
-# install netstat for gut
-RUN apt install -y net-tools
-
-##################################################
-# clean files
-RUN rm ~/go1.9.linux-amd64.tar.gz
 
 EXPOSE 22
 
