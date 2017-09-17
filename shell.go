@@ -411,9 +411,9 @@ func Sync(local *SyncContext, remotes []*SyncContext) (err error) {
 		// XXX if remote has a previous change (i.e. from when it was the local), we don't necessarily pick up that change here.
 		for _, ctx := range changedCtxs {
 			if ctx != local {
-				// log.Printf("Starting GutPush on %s\n", ctx.NameAnsi())
+				log.Printf("Starting GutPush on %s\n", ctx.NameAnsi())
 				err = ctx.GutPush()
-				// log.Printf("Finished GutPush on %s\n", ctx.NameAnsi())
+				log.Printf("Finished GutPush on %s\n", ctx.NameAnsi())
 				if err != nil {
 					status.Printf("@(error:Failed to push changes from) %s @(error:to local: %v)\n", ctx.NameAnsi(), err)
 					continue
