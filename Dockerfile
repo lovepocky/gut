@@ -41,7 +41,7 @@ ENV PATH=$PATH:/usr/local/go/bin
 ##################################################
 # build gut-sync
 # RUN bash -c "source ~/.profile; go get -v github.com/lovepocky/gut"
-RUN go get -v github.com/lovepocky/gut
+RUN go get  -v github.com/lovepocky/gut
 RUN ln -s ~/go/bin/gut /usr/local/bin/gut
 
 ##################################################

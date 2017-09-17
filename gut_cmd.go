@@ -38,6 +38,8 @@ func (ctx *SyncContext) GutDaemon(repoName string, bindPort int) (err error) {
 	}
 	args := []string{
 		"daemon",
+		//add for debug
+		"--verbose",
 		"--export-all",
 		"--base-path=" + basePath,
 		"--reuseaddr",
@@ -151,6 +153,7 @@ func (ctx *SyncContext) GutPull() (err error) {
 	if err != nil {
 		return err
 	}
+	//here maybe used by remote (not local)
 	return ctx.GutMerge("origin/master")
 }
 
