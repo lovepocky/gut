@@ -188,7 +188,11 @@ func (ctx *SyncContext) GutBuild(buildPath string) (err error) {
 	if ctx.IsWindows() {
 		installPrefix = "prefix=" + WindowsPathToMingwPath(gutDistPath)
 	} else {
+		//if ctx.IsDarwin() {
+		//	installPrefix = "prefix=" + gutDistPath + ` CFLAGS="-I/usr/local/opt/openssl/include" LDFLAGS="-L/usr/local/opt/openssl/lib"`
+		//} else {
 		installPrefix = "prefix=" + gutDistPath
+		//}
 	}
 	status := ctx.NewLogger("build")
 	defer status.Close()
@@ -225,13 +229,26 @@ func (ctx *SyncContext) GutBuild(buildPath string) (err error) {
 	if !OptsCommon.BuildParallel {
 		status.Printf("@(dim:(Use) --build-parallel @(dim)to enable parallel builds.)@(r)\n")
 	}
-	retCode, err := doMake("build", installPrefix, "-j", parallelism)
+
+	var retCode int = 0
+	if ctx.IsDarwin() {
+		retCode, err = doMake("build", installPrefix, "-j", parallelism, "CFLAGS=\"-I/usr/local/opt/openssl/include\"", "LDFLAGS=\"-L/usr/local/opt/openssl/lib\"")
+	} else {
+		retCode, err = doMake("build", installPrefix, "-j", parallelism)
+	}
+
 	if err != nil || retCode != 0 {
 		Shutdown(status.Colorify("@(error:`make` failed during gut build.)"), 1)
 	}
 	status.Printf("@(dim:Finished building gut.)\n")
 	status.Printf("@(dim:Installing gut to) @(path:%s)@(dim:...)\n", gutDistPath)
-	retCode, err = doMake("install", installPrefix, "install")
+
+	if ctx.IsDarwin() {
+		retCode, err = doMake("install", installPrefix, "install", "CFLAGS=\"-I/usr/local/opt/openssl/include\"", "LDFLAGS=\"-L/usr/local/opt/openssl/lib\"")
+	} else {
+		retCode, err = doMake("install", installPrefix, "install")
+	}
+
 	if err != nil || retCode != 0 {
 		Shutdown(status.Colorify("@(error:`make install` failed during gut build.)"), 1)
 	}
