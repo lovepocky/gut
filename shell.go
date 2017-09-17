@@ -16,7 +16,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	log "github.com/tillberg/ansi-log"
 	"github.com/tillberg/autorestart"
-	"github.com/tillberg/bismuth"
+	"github.com/lovepocky/bismuth"
 )
 
 var OptsCommon struct {
